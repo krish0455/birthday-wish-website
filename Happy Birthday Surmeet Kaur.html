@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Happy Birthday Surmeet Kaur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html,body{width:100%;height:100%;overflow:hidden;background:#1b1210;font-family:'Quicksand',sans-serif}
+#stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);overflow:hidden;background:linear-gradient(155deg,#fdf8f2,#f2e2ce);color:#4a3427;transition:background 2s}
+#stage.night{background:radial-gradient(circle at 50% 20%,#211a4c,#0f0c29 55%,#05040d);color:#ffe4ec}
+canvas{position:absolute;left:0;top:0;width:100%;height:100%}
+#sky{z-index:5;pointer-events:none}#gl{position:absolute;inset:0;z-index:10;opacity:0;transition:opacity 1s}#gl.on{opacity:1}
+#fx{z-index:60;pointer-events:none}
+.scr{position:absolute;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1em;text-align:center}
+.scr.on{display:flex}
+.card{background:rgba(255,251,246,.93);border:.08em solid #e2c8b2;border-radius:1.3em;padding:1em;width:100%;box-shadow:0 .8em 2em rgba(138,98,74,.18)}
+.night .card{background:rgba(18,15,44,.8);border-color:rgba(255,210,235,.3);color:#ffe4ec;box-shadow:0 0 2em rgba(244,114,182,.25)}
+h1,h2{font-family:'Playfair Display',serif;line-height:1.15;margin:.3em 0}
+h1{font-size:1.9em}h2{font-size:1.35em}p{font-size:.9em;line-height:1.45;margin:.4em 0 .8em}
+.tag{display:inline-block;font-size:.62em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#f7e5d4;color:#9c6647;border-radius:2em;padding:.3em .9em}
+.btn{border:0;border-radius:1em;padding:.7em 1.3em;font:700 1em 'Quicksand',sans-serif;color:#fff;background:linear-gradient(135deg,#f47296,#dc4c73);box-shadow:0 .4em 1em rgba(220,76,115,.45);cursor:pointer;transition:transform .25s}
+.btn.alt{background:#efdcc8;color:#6b4e3e;box-shadow:none}.btn.w{width:100%}
+.row{display:flex;gap:.8em;justify-content:center;flex-wrap:wrap}
+#extra{display:grid;gap:.5em;margin-top:.9em}#extra .btn{background:#fce4ec;color:#ad1457;box-shadow:none;border:.06em solid #f48fb1;font-size:.85em}
+.pill{border-radius:2em;padding:.55em 1em;font-weight:700;font-size:.85em}
+.bal{position:absolute;left:0;top:0;border-radius:50% 50% 46% 46%;display:flex;align-items:center;justify-content:center;font-size:1.4em;cursor:pointer;box-shadow:inset -.3em -.4em .6em rgba(0,0,0,.12)}
+#s3{justify-content:space-between;pointer-events:none}#s3 .card{pointer-events:auto}
+#s4{background:rgba(2,2,6,.96);color:#fce7f3;animation:fade 2.2s}@keyframes fade{from{opacity:0}}
+.chip{display:inline-block;margin:.2em;padding:.3em .7em;border-radius:2em;background:rgba(255,255,255,.12);font-size:.7em;font-weight:700;cursor:pointer}
+.shim{background:linear-gradient(90deg,#ffe4ec,#ffb3c6,#fef08a,#f9a8d4,#ffe4ec);background-size:300%;-webkit-background-clip:text;color:transparent;animation:sh 4s infinite}@keyframes sh{50%{background-position:100%}}
+#snd{position:absolute;top:.6em;right:.6em;z-index:70;width:2.4em;height:2.4em;border-radius:50%;border:0;background:rgba(255,251,246,.85);cursor:pointer}
+</style></head>
+<body>
+<div id="stage">
+<canvas id="sky"></canvas><div id="gl"></div><canvas id="fx"></canvas>
+<button id="snd">🔊</button>
+
+<section id="s1" class="scr on"><div class="card">
+<div style="font-size:4em">🐼</div>
+<span class="tag">🌸 Special Delivery for Surmeet Kaur 🌸</span>
+<h1 id="q">Do you like me?</h1>
+<p id="qs">Before we unlock your birthday magic, answer honestly... 🥺✨</p>
+<div class="row"><button class="btn" id="yes">Yes! 💖</button><button class="btn alt" id="no">No 🙈</button></div>
+<div id="extra"></div></div></section>
+
+<section id="s2" class="scr" style="justify-content:flex-start">
+<div class="card" style="display:flex;justify-content:space-between;align-items:center;z-index:25;position:relative">
+<div style="text-align:left"><div class="tag">🎈 Popped</div><div style="font-size:1.5em;font-weight:700"><span id="sc" style="color:#dc4c73">0</span> <span style="font-size:.55em">/ 10</span></div></div>
+<div style="text-align:right"><div class="tag">Time</div><div id="tm" style="font-size:1.5em;font-weight:700">10.0s</div></div></div>
+<div id="arena" style="position:absolute;inset:0;z-index:20;overflow:hidden"></div>
+<div id="modal" style="position:absolute;inset:0;z-index:40;display:flex;align-items:center;padding:1em;background:rgba(0,0,0,.15)"><div class="card">
+<div id="me" style="font-size:3em">🎈✨</div><h2 id="mt">Birthday Balloon Challenge!</h2>
+<p id="md">Pop <b style="color:#dc4c73">10 balloons in 10 seconds</b> to unlock your surprise! Golden 💖 balloons are extra special.</p>
+<button class="btn w" id="mb">Start Popping! 🎯</button></div></div></section>
+
+<section id="s3" class="scr">
+<div style="width:100%;margin-top:2.4em"><div id="cap" class="card pill">🐼 Look who's waddling over with a surprise...</div>
+<div id="msg" class="card" style="display:none;padding:.9em">
+<span class="tag" style="background:rgba(236,72,153,.2);color:#fbcfe8">🌠 Written in the stars 🌠</span>
+<h2 class="shim" style="font-size:1.5em">Happy Birthday Surmeet Kaur! ✨</h2>
+<p style="margin-bottom:.4em">"I genuinely like you, just wanted to say this... and a very, very Happy Birthday to you! 💖"</p>
+<span class="chip" data-m="Effortlessly cute 🌸">🌸 Effortlessly Cute</span><span class="chip" data-m="Brightest smile ✨">✨ Brightest Smile</span><span class="chip" data-m="Truly special 💖">💖 Truly Special</span></div></div>
+<div style="width:100%;margin-bottom:.4em">
+<div id="cp" class="card" style="display:none"><div class="tag">🎂 Make a wish!</div><h2 style="font-size:1.1em">Blow out your candles, Surmeet! 🕯️</h2>
+<div style="height:.5em;background:#ebd9c8;border-radius:1em;overflow:hidden;margin:.5em 0"><div id="cb" style="height:100%;width:100%;background:linear-gradient(90deg,#f59e0b,#f47296,#8b5cf6)"></div></div>
+<button class="btn w" id="blow">🌬️ Tap to Blow Out Candles</button></div>
+<div id="gp" class="card" style="display:none"><p style="margin-top:0">🐼 Panda brought a gift just for you!</p><button class="btn w" id="gift">🎁 Tap to Unwrap Your Gift ✨</button></div></div>
+</section>
+
+<section id="s4" class="scr">
+<div style="font-size:3em">🌙</div><div class="tag" style="background:none;color:#f9a8d4">Lights Out • Sweetest Dreams</div>
+<h2 style="font-size:1.6em;color:#fce7f3">Happy Birthday, Surmeet Kaur ❤️</h2>
+<p style="max-width:20em">May every shooting star tonight bring you endless happiness, magic and smiles. Goodnight & have the most unforgettable birthday ever! ✨🐼💖</p>
+<div class="card" style="margin-bottom:1em;font-size:.8em">Birthday Girl: <b>Surmeet Kaur 👑</b><br>Secret Confession: <b>I Genuinely Like You 💖</b></div>
+<button class="btn alt" onclick="location.reload()">↻ Replay Your Birthday Surprise</button></section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),st=$('stage'),gl=$('gl'),fxc=$('fx'),skc=$('sky'),fx=fxc.getContext('2d'),sk=skc.getContext('2d');
+let W,H,dpr=Math.min(devicePixelRatio||1,2),renderer,camera,stars=[],night=false;
+/* FIXED 9:16 STAGE: identical layout on phone & desktop, everything sized in em */
+function fit(){W=Math.min(innerWidth,innerHeight*9/16);H=W*16/9;st.style.width=W+'px';st.style.height=H+'px';st.style.fontSize=W/26+'px';
+ [fxc,skc].forEach(c=>{c.width=W*dpr;c.height=H*dpr});
+ if(renderer){renderer.setSize(W,H);camera.aspect=W/H;camera.updateProjectionMatrix()}
+ stars=Array.from({length:Math.floor(W*H/2600)},()=>({x:Math.random()*W,y:Math.random()*H*.9,r:Math.random()*1.8+.4,a:Math.random()*6,s:.02+Math.random()*.04}))}
+addEventListener('resize',fit);
+
+/* AUDIO */
+let ac,mute=false;
+function tone(f,d=.2,t='sine',v=.12,dl=0){if(mute)return;ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+ const o=ac.createOscillator(),g=ac.createGain(),n=ac.currentTime+dl;o.type=t;o.frequency.value=f;g.gain.setValueAtTime(.001,n);g.gain.linearRampToValueAtTime(v,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+d);o.connect(g);g.connect(ac.destination);o.start(n);o.stop(n+d+.05)}
+const chime=()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,.4,'sine',.13,i*.07));
+const melody=()=>[[392,0],[392,.3],[440,.55],[392,1.05],[523,1.55],[494,2.05],[392,3],[392,3.3],[440,3.55],[392,4.05],[587,4.55],[523,5.05]].forEach(([f,t])=>tone(f,.5,'sine',.13,t));
+$('snd').onclick=()=>{mute=!mute;$('snd').textContent=mute?'🔇':'🔊'};
+
+/* 2D FX + NIGHT SKY */
+let P=[],T=[],shoots=[];
+function burst(x,y,cols=['#f47296','#fde047','#c084fc','#fff'],n=22,heart=true){for(let i=0;i<n;i++){const a=Math.PI*2*i/n+Math.random()*.3,s=2+Math.random()*5;P.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-1.5,l:1,d:.014+Math.random()*.012,c:cols[i%cols.length],h:heart,z:(10+Math.random()*10)*W/412})}}
+function ftext(x,y,t,c='#e11d48',z=1){T.push({x,y,t,c,l:1,z})}
+function shoot(x=Math.random()*W,y=Math.random()*H*.4){const a=.45+Math.random()*.3,s=9+Math.random()*6;shoots.push({x,y,vx:-Math.cos(a)*s,vy:Math.sin(a)*s,l:1})}
+function draw2d(){
+ sk.setTransform(dpr,0,0,dpr,0,0);sk.clearRect(0,0,W,H);
+ if(night){stars.forEach(s=>{s.a+=s.s;sk.globalAlpha=.3+Math.abs(Math.sin(s.a))*.7;sk.fillStyle='#fff';sk.beginPath();sk.arc(s.x,s.y,s.r,0,7);sk.fill()});sk.globalAlpha=1;
+  if(Math.random()<.04)shoot();
+  for(let i=shoots.length-1;i>=0;i--){const s=shoots[i];s.x+=s.vx;s.y+=s.vy;s.l-=.012;if(s.l<=0){shoots.splice(i,1);continue}
+   sk.strokeStyle=`rgba(255,220,240,${s.l})`;sk.lineWidth=2.5;sk.lineCap='round';sk.shadowBlur=10;sk.shadowColor='#f9a8d4';sk.beginPath();sk.moveTo(s.x,s.y);sk.lineTo(s.x-s.vx*9,s.y-s.vy*9);sk.stroke();sk.shadowBlur=0}}
+ fx.setTransform(dpr,0,0,dpr,0,0);fx.clearRect(0,0,W,H);fx.textAlign='center';
+ for(let i=P.length-1;i>=0;i--){const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.11;p.l-=p.d;if(p.l<=0){P.splice(i,1);continue}
+  fx.globalAlpha=p.l;if(p.h){fx.font=p.z+'px serif';fx.fillText('💖',p.x,p.y)}else{fx.fillStyle=p.c;fx.beginPath();fx.arc(p.x,p.y,p.z/3,0,7);fx.fill()}}
+ for(let i=T.length-1;i>=0;i--){const t=T[i];t.y-=1.2;t.l-=.012;if(t.l<=0){T.splice(i,1);continue}
+  fx.globalAlpha=Math.min(1,t.l*1.5);fx.font=`700 ${W/26*t.z}px Quicksand,sans-serif`;fx.shadowBlur=8;fx.shadowColor='rgba(0,0,0,.35)';fx.fillStyle=t.c;fx.fillText(t.t,t.x,t.y);fx.shadowBlur=0}
+ fx.globalAlpha=1}
+
+/* SCREENS */
+const go=id=>{document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on')};
+
+/* STAGE 1 : every answer leads to YES */
+const NO=[{t:"Wait... are you sure?! 🥺",s:"Look at Panda's puppy eyes! Better choices coming...",n:"Still No 😜",o:["Yes, obviously! 💖","Okay fine, YES! 🌸"]},
+{t:"Error 404: 'No' Not Accepted! 🚨",s:"On Surmeet Kaur's birthday only happy answers are allowed!",n:"Hmm... 🤔",o:["Yes, 1000% Yes! 🥰","Secretly Yes! 🙈","Yes, unlock my surprise! 🎂"]},
+{t:"Resistance is Futile! 🐼💘",s:"Every button has officially joined Team YES!",n:"Yes in Disguise! 💖",c:1,o:["YESSS! 💖✨","Of course I like you! 🥰","Take me to my surprise! 🎈"]}];
+let nc=0;
+function yes(){chime();burst(W/2,H/2,undefined,36);ftext(W/2,H*.4,"Yay!! I knew it! 💖🐼");setTimeout(()=>go('s2'),500)}
+$('yes').onclick=yes;
+$('no').onclick=function(){tone(340,.2,'triangle');const d=NO[Math.min(nc++,2)];$('q').textContent=d.t;$('qs').textContent=d.s;this.textContent=d.n;$('yes').style.transform=`scale(${1+nc*.12})`;
+ const ex=$('extra');ex.innerHTML='';d.o.forEach(o=>{const b=document.createElement('button');b.className='btn';b.textContent=o;b.onclick=yes;ex.appendChild(b)});
+ if(d.c){this.className='btn';this.onclick=yes}};
+
+/* STAGE 2 : balloons */
+const pal=['#f48fb1','#ce93d8','#ffcc80','#80cbc4','#ef9a9a','#90caf9'];
+let bal=[],score=0,tEnd=0,active=false,spT=0;
+function spawn(init){const gold=Math.random()<.22,c=gold?'#fde047':pal[Math.random()*6|0],s=W*.17,el=document.createElement('div');
+ el.className='bal';el.style.cssText+=`width:${s}px;height:${s*1.22}px;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.75) 0 10%,${c} 40%)`;if(gold)el.textContent='💖';
+ const b={el,x:Math.random()*(W-s),y:init?H*.4+Math.random()*H*.45:H+20,vy:H*.2+Math.random()*H*.18,ph:Math.random()*6,gold,c};
+ el.onpointerdown=e=>{e.preventDefault();if(!active)return;score++;tone(420+Math.min(score,15)*42,.14,'sine',.2);
+  const r=el.getBoundingClientRect(),k=W/st.getBoundingClientRect().width,sr=st.getBoundingClientRect(),cx=(r.left-sr.left+r.width/2)*k,cy=(r.top-sr.top+r.height/2)*k;
+  burst(cx,cy,[b.c,'#fff','#fde047'],gold?20:12,gold);if(gold||score%2==0)ftext(cx,cy,["Cutie! 🌸","Birthday Queen 👑","Sweetest Smile ✨","Pure Magic 💖"][score%4],'#db2777');
+  el.remove();bal=bal.filter(x=>x!==b);$('sc').textContent=score;if(score>=10)endGame(true)};
+ $('arena').appendChild(el);bal.push(b)}
+function startGame(){tone(587,.2);score=0;active=true;bal.forEach(b=>b.el.remove());bal=[];$('sc').textContent=0;$('modal').style.display='none';tEnd=performance.now()+10000;for(let i=0;i<6;i++)spawn(true)}
+function gameStep(dt){spT+=dt;if(spT>.34){spT=0;spawn()}
+ bal.forEach(b=>{b.y-=b.vy*dt;b.ph+=dt*2;b.el.style.transform=`translate(${b.x+Math.sin(b.ph)*W*.03}px,${b.y}px)`});
+ bal=bal.filter(b=>{if(b.y<-140){b.el.remove();return false}return true});
+ const left=Math.max(0,(tEnd-performance.now())/1000);$('tm').textContent=left.toFixed(1)+'s';if(left<=0)endGame(score>=10)}
+function endGame(won){active=false;bal.forEach(b=>b.el.remove());bal=[];$('modal').style.display='flex';const mb=$('mb');
+ if(won){chime();burst(W/2,H/2,undefined,40);$('me').textContent='🎉🐼🎂';$('mt').textContent='Yay! Challenge Complete!';$('md').innerHTML=`Lightning fast, Surmeet! You popped <b>${score}</b> balloons! Someone super cute is waddling over...`;mb.textContent='Bring Out My Surprise! ✨';mb.onclick=startStage3}
+ else{tone(200,.25,'triangle');$('me').textContent='🎈🥺';$('mt').textContent='Almost There!';$('md').innerHTML=`You popped <b>${score}/10</b>. Tap the rising balloons faster — one more try! 💪`;mb.textContent='Try Again! 🎈';mb.onclick=startGame}}
+$('mb').onclick=startGame;
+
+/* 3D WORLD */
+let scene,panda,head,legL,legR,armL,armR,cake,gift,lid,flames=[],candleLight,amb,hemi,dir,pinkL,ray=new THREE.Raycaster();
+let mode='off',wt=0,pet=0,cakeT=0,giftT=0,lidV=0,lean=0,leanT=0,blown=false,cdInt;
+const M=(c,r=.7,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:r},o));
+const SG=new THREE.SphereGeometry(1,48,32);
+function sp(m,x,y,z,sx,sy,sz,p){const s=new THREE.Mesh(SG,m);s.position.set(x,y,z);s.scale.set(sx,sy,sz);s.castShadow=true;p.add(s);return s}
+function cyl(p,rt,rb,h,m,y){const c=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,40),m);c.position.y=y;c.castShadow=c.receiveShadow=true;p.add(c);return c}
+function build(){
+ scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(40,W/H,.1,100);camera.position.set(0,2.8,8.6);
+ renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(dpr);renderer.setSize(W,H);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;gl.appendChild(renderer.domElement);
+ amb=new THREE.AmbientLight(0xfff0e6,.7);hemi=new THREE.HemisphereLight(0xfff5ee,0xf4c9b8,.55);dir=new THREE.DirectionalLight(0xffffff,.9);dir.position.set(3,8,6);dir.castShadow=true;dir.shadow.mapSize.set(1024,1024);
+ pinkL=new THREE.PointLight(0xf472b6,.3,12);pinkL.position.set(0,3,3);scene.add(amb,hemi,dir,pinkL);
+ const fl=new THREE.Mesh(new THREE.CylinderGeometry(3.4,3.5,.2,64),M(0xf4e4d4,.8));fl.position.y=-.1;fl.receiveShadow=true;scene.add(fl);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(3.4,.05,12,64),M(0xf47296,.3,{metalness:.4}));ring.rotation.x=Math.PI/2;scene.add(ring);
+ const wh=M(0xfffaf4,.92),bk=M(0x2b2429,.8),pk=M(0xff8fab,.6),cr=M(0xffefe0,.9),red=M(0xe11d48,.4),gold=M(0xfbbf24,.3,{metalness:.5}),shine=new THREE.MeshBasicMaterial({color:0xffffff}),blush=new THREE.MeshBasicMaterial({color:0xff7fa0,transparent:true,opacity:.75});
+ /* PANDA */
+ panda=new THREE.Group();panda.position.z=-5;scene.add(panda);
+ sp(wh,0,.95,0,.8,.88,.7,panda);sp(cr,0,.9,.36,.55,.62,.42,panda);sp(wh,0,.7,-.62,.24,.24,.24,panda);
+ const leg=x=>{const g=new THREE.Group();g.position.set(x,.55,.15);sp(bk,0,-.22,.04,.3,.4,.34,g);sp(pk,0,-.5,.28,.15,.07,.12,g);panda.add(g);return g};legL=leg(-.42);legR=leg(.42);
+ const arm=x=>{const g=new THREE.Group();g.position.set(x,1.35,.12);sp(bk,x*.12,-.32,0,.22,.44,.25,g);panda.add(g);return g};armL=arm(-.78);armR=arm(.78);
+ sp(red,-.2,1.6,.5,.2,.14,.12,panda);sp(red,.2,1.6,.5,.2,.14,.12,panda);sp(M(0xbe123c,.4),0,1.6,.54,.1,.1,.1,panda);
+ head=new THREE.Group();head.position.set(0,2.05,.05);panda.add(head);
+ sp(wh,0,0,0,.98,.84,.84,head);sp(cr,0,-.14,.6,.32,.24,.22,head);
+ [-1,1].forEach(s=>{sp(bk,s*.66,.62,-.05,.28,.28,.2,head);sp(pk,s*.66,.62,.1,.14,.14,.08,head);
+  const patch=sp(bk,s*.37,.08,.66,.21,.27,.12,head);patch.rotation.z=-s*.35;
+  sp(shine,s*.37,.11,.76,.1,.11,.05,head);sp(bk,s*.37,.1,.8,.055,.065,.03,head);sp(shine,s*.35,.14,.83,.02,.02,.02,head);
+  sp(blush,s*.58,-.15,.62,.15,.1,.05,head);
+  const m=new THREE.Mesh(new THREE.TorusGeometry(.085,.015,8,16,Math.PI),bk);m.position.set(s*.09,-.22,.8);m.rotation.z=Math.PI;head.add(m)});
+ sp(bk,0,-.08,.8,.13,.09,.09,head);
+ const hat=new THREE.Group();hat.position.set(0,.84,0);hat.rotation.z=-.2;head.add(hat);
+ const cone=new THREE.Mesh(new THREE.ConeGeometry(.32,.7,32),pk);cone.position.y=.28;cone.castShadow=true;hat.add(cone);
+ const hr=new THREE.Mesh(new THREE.TorusGeometry(.23,.03,8,24),gold);hr.rotation.x=Math.PI/2;hr.position.y=.2;hat.add(hr);sp(gold,0,.64,0,.08,.08,.08,hat);
+ /* CAKE */
+ cake=new THREE.Group();cake.position.set(0,0,1.7);cake.scale.setScalar(.001);scene.add(cake);
+ cyl(cake,.95,.95,.06,M(0xffffff,.4),.03);cyl(cake,.72,.72,.34,pk,.23);cyl(cake,.5,.5,.28,cr,.54);
+ [[.72,.4],[.5,.68]].forEach(([r,y])=>{const t=new THREE.Mesh(new THREE.TorusGeometry(r,.06,10,48),M(0xffffff,.5));t.rotation.x=Math.PI/2;t.position.y=y;cake.add(t)});
+ for(let i=0;i<3;i++){const x=(i-1)*.2;cyl(cake,.035,.035,.3,M([0x7dd3fc,0xfde047,0xc4b5fd][i],.5),.83);
+  const f=new THREE.Mesh(SG,new THREE.MeshBasicMaterial({color:0xffd36b}));f.scale.set(.05,.09,.05);f.position.set(x,1.03,0);cake.add(f);flames.push(f);
+  cake.children[cake.children.length-2].position.x=x}
+ sp(red,.28,.76,.2,.07,.07,.07,cake);sp(red,-.3,.76,.18,.07,.07,.07,cake);
+ candleLight=new THREE.PointLight(0xffa94d,.9,4);candleLight.position.set(0,1.2,0);cake.add(candleLight);
+ /* GIFT */
+ gift=new THREE.Group();gift.position.set(0,0,1.7);gift.scale.setScalar(.001);scene.add(gift);
+ const bx=(w,h,d,m,y,p)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.position.y=y;b.castShadow=true;p.add(b)};
+ bx(.9,.6,.9,pk,.3,gift);bx(.94,.62,.16,gold,.3,gift);bx(.16,.62,.94,gold,.3,gift);
+ lid=new THREE.Group();lid.position.y=.6;gift.add(lid);bx(1,.16,1,pk,.08,lid);bx(1.02,.17,.16,gold,.08,lid);bx(.16,.17,1.02,gold,.08,lid);sp(gold,-.14,.22,0,.15,.1,.1,lid);sp(gold,.14,.22,0,.15,.1,.1,lid);sp(gold,0,.2,0,.07,.07,.07,lid);
+ gift.visible=false;
+}
+function pose(dt,T){
+ if(mode==='walk'){wt+=dt;const k=Math.min(wt/5,1),s=Math.sin(wt*9);panda.position.z=-5+5.2*k;panda.position.y=Math.abs(s)*.12;panda.rotation.z=s*.05;legL.rotation.x=s*.6;legR.rotation.x=-s*.6;armL.rotation.x=-s*.5;armR.rotation.x=s*.5;
+  if(k>=1){mode='idle';onArrive()}}
+ else if(mode==='idle'){panda.position.y=Math.sin(T*2)*.03;panda.rotation.z=0;[legL,legR,armL,armR].forEach(l=>l.rotation.x*=.9);armL.rotation.z=Math.sin(T*2)*.04}
+ if(mode!=='off'){if(pet>0){pet-=dt;head.rotation.z=Math.sin(pet*20)*.2*Math.min(pet,1);head.scale.setScalar(1+Math.sin(pet*14)*.06*Math.min(pet,1))}else{head.rotation.z=Math.sin(T*1.5)*.04;head.scale.setScalar(1)}
+  lean+=(leanT-lean)*Math.min(1,dt*4);head.rotation.x=lean*.35;head.position.z=.05+lean*.35}
+ cake.scale.setScalar(Math.max(.001,cake.scale.x+(cakeT-cake.scale.x)*Math.min(1,dt*5)));cake.visible=cake.scale.x>.01;
+ gift.scale.setScalar(Math.max(.001,gift.scale.x+(giftT-gift.scale.x)*Math.min(1,dt*5)));
+ if(lidV){lid.position.y+=lidV*dt;lid.rotation.z+=dt*3;lid.position.x+=dt*.8;lidV-=dt*3;if(lid.position.y<-2){lidV=0;lid.visible=false}}
+ if(!blown)flames.forEach(f=>f.scale.set(.05+Math.random()*.01,.09+Math.random()*.025,.05))}
+
+/* STAGE 3+ FLOW */
+function startStage3(){go('s3');gl.classList.add('on');mode='walk';wt=0;[0,.4].forEach((d,i)=>setInterval(()=>mode==='walk'&&tone(150,.07,'sine',.05,0),330))}
+function onArrive(){chime();$('cap').textContent='🎂 Hi Surmeet! Panda made you a cake!';setTimeout(()=>{cakeT=1;tone(440,.4,'triangle',.12);$('cp').style.display='block';$('cap').style.display='none';
+ const t0=performance.now();cdInt=setInterval(()=>{const l=Math.max(0,10-(performance.now()-t0)/1000);$('cb').style.width=l*10+'%';if(l<=0)blowOut()},100)},1200)}
+function blowOut(){if(blown)return;blown=true;clearInterval(cdInt);flames.forEach(f=>f.visible=false);candleLight.intensity=0;tone(600,.35,'sawtooth',.04);
+ $('cp').style.display='none';goNight();melody();burst(W/2,H*.5,undefined,30);
+ setTimeout(()=>{$('msg').style.display='block'},700);
+ setTimeout(()=>{cakeT=0;giftT=1;gift.visible=true;$('gp').style.display='block';chime()},5000)}
+$('blow').onclick=blowOut;
+function goNight(){st.classList.add('night');night=true;amb.intensity=.4;hemi.intensity=.25;dir.intensity=.4;pinkL.intensity=1.3;pinkL.color.set(0xc084fc)}
+$('gift').onclick=()=>{$('gp').style.display='none';lidV=4;chime();burst(W/2,H*.62,undefined,40);leanT=1;
+ setTimeout(()=>{tone(580,.12,'sine',.22);tone(920,.3,'sine',.24,.1);ftext(W/2,H*.4,"💋 Mwah!! Happy Birthday Surmeet! 💖",'#fda4af',1.1);burst(W/2,H*.35,undefined,30)},900);
+ setTimeout(()=>{go('s4')},5200)};
+document.querySelectorAll('.chip').forEach(c=>c.onclick=e=>{e.stopPropagation();const r=st.getBoundingClientRect();burst(e.clientX-r.left,e.clientY-r.top,undefined,14);ftext(e.clientX-r.left,e.clientY-r.top-10,c.dataset.m,'#fef08a');tone(1000,.25,'sine',.08)});
+/* tap panda to pet / tap sky to wish */
+st.addEventListener('pointerdown',e=>{if(e.target.closest('.card,button,.chip')||mode==='off')return;const r=st.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+ ray.setFromCamera(new THREE.Vector2(x/W*2-1,-(y/H)*2+1),camera);
+ if(ray.intersectObject(panda,true).length){pet=1.2;[620,780,680,920].forEach((n,i)=>tone(n,.12,'sine',.1,i*.065));burst(x,y,undefined,10);ftext(x,y-20,"Hehe, that tickles Surmeet! 🥰🐼",'#d946ef')}
+ else if(night){shoot(x,y);ftext(x,y,["✨ Wish granted!","💖 Endless happiness!","🌠 Keep smiling!","👑 Queen of the night!"][Math.random()*4|0],'#fef08a');tone(900+Math.random()*400,.3,'sine',.08)}});
+
+fit();build();
+const clock=new THREE.Clock();let TT=0;
+(function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);TT+=dt;if(active)gameStep(dt);pose(dt,TT);
+ if(gl.classList.contains('on')){camera.position.x=Math.sin(TT*.3)*.25;camera.lookAt(0,1.2,.4);renderer.render(scene,camera)}draw2d()})();
+</script></body></html>
